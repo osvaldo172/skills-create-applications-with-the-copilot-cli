@@ -30,6 +30,28 @@ function toNumber(n) {
   return Number(n);
 }
 
+// Arithmetic functions exported for testing and reuse
+function add(a, b) {
+  return Number(a) + Number(b);
+}
+
+function sub(a, b) {
+  return Number(a) - Number(b);
+}
+
+function mul(a, b) {
+  return Number(a) * Number(b);
+}
+
+function div(a, b) {
+  const y = Number(b);
+  if (y === 0) {
+    // Division by zero should be handled by callers; throw for tests
+    throw new Error('Division by zero');
+  }
+  return Number(a) / y;
+}
+
 function run() {
   const [, , op, a, b] = process.argv;
 
@@ -42,38 +64,37 @@ function run() {
     usage(2);
   }
 
-  const x = toNumber(a);
-  const y = toNumber(b);
   let result;
+  try {
+    switch (op.toLowerCase()) {
+      case "add":
+      case "addition":
+        result = add(a, b);
+        break;
 
-  switch (op.toLowerCase()) {
-    case "add":
-    case "addition":
-      result = x + y;
-      break;
+      case "sub":
+      case "subtraction":
+        result = sub(a, b);
+        break;
 
-    case "sub":
-    case "subtraction":
-      result = x - y;
-      break;
+      case "mul":
+      case "multiplication":
+        result = mul(a, b);
+        break;
 
-    case "mul":
-    case "multiplication":
-      result = x * y;
-      break;
+      case "div":
+      case "division":
+        result = div(a, b);
+        break;
 
-    case "div":
-    case "division":
-      if (y === 0) {
-        console.error("Error: Division by zero is not allowed.");
-        process.exit(3);
-      }
-      result = x / y;
-      break;
-
-    default:
-      console.error(`Error: unknown operation: ${op}`);
-      usage(1);
+      default:
+        console.error(`Error: unknown operation: ${op}`);
+        usage(1);
+    }
+  } catch (err) {
+    console.error("Error:", err.message);
+    // Division by zero returns exit code 3 to preserve previous behavior
+    process.exit(3);
   }
 
   // Print numeric result to stdout
@@ -85,6 +106,16 @@ function run() {
     process.exit(4);
   }
 }
+
+// Export functions for testing
+module.exports = {
+  isNumeric,
+  toNumber,
+  add,
+  sub,
+  mul,
+  div,
+};
 
 if (require.main === module) {
   run();
