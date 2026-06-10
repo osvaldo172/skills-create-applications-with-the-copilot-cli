@@ -52,21 +52,50 @@ function div(a, b) {
   return Number(a) / y;
 }
 
+function modulo(a, b) {
+  const y = Number(b);
+  if (y === 0) {
+    throw new Error('Modulo by zero');
+  }
+  return Number(a) % y;
+}
+
+function power(base, exponent) {
+  return Math.pow(Number(base), Number(exponent));
+}
+
+function squareRoot(n) {
+  const x = Number(n);
+  if (x < 0) {
+    throw new Error('Square root of negative number');
+  }
+  return Math.sqrt(x);
+}
+
 function run() {
   const [, , op, a, b] = process.argv;
+  const opLower = op && op.toLowerCase();
+  const unaryOps = new Set(["sqrt", "squareroot"]);
 
-  if (!op || a === undefined || b === undefined) {
+  if (!op || (unaryOps.has(opLower) ? a === undefined : (a === undefined || b === undefined))) {
     usage(1);
   }
 
-  if (!isNumeric(a) || !isNumeric(b)) {
-    console.error("Error: both operands must be numeric.");
-    usage(2);
+  if (unaryOps.has(opLower)) {
+    if (!isNumeric(a)) {
+      console.error("Error: operand must be numeric.");
+      usage(2);
+    }
+  } else {
+    if (!isNumeric(a) || !isNumeric(b)) {
+      console.error("Error: both operands must be numeric.");
+      usage(2);
+    }
   }
 
   let result;
   try {
-    switch (op.toLowerCase()) {
+    switch (opLower) {
       case "add":
       case "addition":
         result = add(a, b);
@@ -87,13 +116,28 @@ function run() {
         result = div(a, b);
         break;
 
+      case "mod":
+      case "modulo":
+        result = modulo(a, b);
+        break;
+
+      case "pow":
+      case "power":
+        result = power(a, b);
+        break;
+
+      case "sqrt":
+      case "squareroot":
+        result = squareRoot(a);
+        break;
+
       default:
         console.error(`Error: unknown operation: ${op}`);
         usage(1);
     }
   } catch (err) {
     console.error("Error:", err.message);
-    // Division by zero returns exit code 3 to preserve previous behavior
+    // Arithmetic errors (division/modulo by zero, sqrt negative) return exit code 3
     process.exit(3);
   }
 
@@ -115,6 +159,9 @@ module.exports = {
   sub,
   mul,
   div,
+  modulo,
+  power,
+  squareRoot,
 };
 
 if (require.main === module) {
