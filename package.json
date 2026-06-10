@@ -1,0 +1,9 @@
+{
+  "name": "cli-calculator",
+  "version": "0.1.0",
+  "description": "A minimal Node.js CLI calculator supporting basic arithmetic operations",
+  "bin": {
+    "calculator": "src/calculator.js"
+  },
+  "license": "MIT"
+}
