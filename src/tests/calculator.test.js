@@ -29,4 +29,29 @@ describe('Calculator basic operations', () => {
   test('handles floating point numbers', () => {
     expect(calc.add(0.1, 0.2)).toBeCloseTo(0.30000000000000004);
   });
+
+  // Extended operations from the feature request/image
+  test('5 % 2 = 1 (modulo)', () => {
+    expect(calc.modulo(5, 2)).toBe(1);
+  });
+
+  test('2 ^ 3 = 8 (power)', () => {
+    expect(calc.power(2, 3)).toBe(8);
+  });
+
+  test('sqrt(16) = 4 (square root)', () => {
+    expect(calc.squareRoot(16)).toBe(4);
+  });
+
+  test('modulo by zero throws', () => {
+    expect(() => calc.modulo(4, 0)).toThrow(/modulo by zero/i);
+  });
+
+  test('square root of negative number throws', () => {
+    expect(() => calc.squareRoot(-9)).toThrow(/square root of negative/i);
+  });
+
+  test('power with non-integer exponent', () => {
+    expect(calc.power(9, 0.5)).toBeCloseTo(3);
+  });
 });
